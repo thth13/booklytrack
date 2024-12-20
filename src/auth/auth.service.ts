@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import Cryptr = require('cryptr');
 import { Model } from 'mongoose';
@@ -44,19 +48,29 @@ export class AuthService {
     return refreshToken.refreshToken;
   }
 
-  private jwtExtractor(request) {
-    let token = null;
-    if (request.header('x-token')) {
-      token = request.get('x-token');
-    } else if (request.headers.authorization) {
-      token = request.headers.authorization
-        .replace('Bearer ', '')
-        .replace(' ', '');
-    } else if (request.body.token) {
-      token = request.body.token.replace(' ', '');
+  async findRefreshToken(token: string) {
+    const refreshToken = await this.refreshTokenModel.findOne({
+      refreshToken: token,
+    });
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('User has been logged out.');
     }
-    if (request.query.token) {
-      token = request.body.token.replace(' ', '');
+
+    return refreshToken.userId;
+  }
+
+  private jwtExtractor(req: Request) {
+    let token = null;
+    if (req.header('x-token')) {
+      token = req.get('x-token');
+    } else if (req.headers.authorization) {
+      token = req.headers.authorization.replace('Bearer ', '').replace(' ', '');
+    } else if (req.body.token) {
+      token = req.body.token.replace(' ', '');
+    }
+    if (req.query.token) {
+      token = req.body.token.replace(' ', '');
     }
 
     const cryptr = new Cryptr(process.env.ENCRYPT_JWT_SECRET);

@@ -15,6 +15,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
+import { RefreshAccessTokenDto } from './dto/refresh-access-token';
 
 @Controller('user')
 export class UserController {
@@ -34,5 +35,15 @@ export class UserController {
   @ApiOkResponse({})
   async login(@Req() req: Request, @Body() loginUserDto: LoginUserDto) {
     return await this.userService.login(req, loginUserDto);
+  }
+
+  @Post('refresh-access-token')
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ description: 'Refresh Access Token with refesh token' })
+  @ApiCreatedResponse({})
+  async refreshAccessToken(
+    @Body() refreshAccessTokenDto: RefreshAccessTokenDto,
+  ) {
+    return await this.userService.refreshAccessToken(refreshAccessTokenDto);
   }
 }

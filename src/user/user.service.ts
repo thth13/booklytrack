@@ -13,6 +13,7 @@ import * as bcrypt from 'bcrypt';
 import { Model } from 'mongoose';
 import { AuthService } from 'src/auth/auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { RefreshAccessTokenDto } from './dto/refresh-access-token';
 
 @Injectable()
 export class UserService {
@@ -42,6 +43,21 @@ export class UserService {
       email: user.email,
       accessToken: await this.authService.createAccessToken(user._id),
       refreshToken: await this.authService.createRefreshToken(req, user._id),
+    };
+  }
+
+  async refreshAccessToken(refreshAccessTokenDto: RefreshAccessTokenDto) {
+    const userId = await this.authService.findRefreshToken(
+      refreshAccessTokenDto.refreshToken,
+    );
+    const user = await this.userModel.findById(userId);
+
+    if (!user) {
+      throw new BadRequestException('Bad request');
+    }
+
+    return {
+      accessToken: await this.authService.createAccessToken(user._id),
     };
   }
 
