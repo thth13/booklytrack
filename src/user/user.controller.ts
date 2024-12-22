@@ -1,21 +1,13 @@
-import {
-  Body,
-  Controller,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
 import { Request } from 'express';
-import {
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiOperation,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiHeader } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RefreshAccessTokenDto } from './dto/refresh-access-token';
+import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
+import { VerifyUuidDto } from './dto/verify-uuid.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
 
 @Controller('user')
 export class UserController {
@@ -41,9 +33,36 @@ export class UserController {
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ description: 'Refresh Access Token with refesh token' })
   @ApiCreatedResponse({})
-  async refreshAccessToken(
-    @Body() refreshAccessTokenDto: RefreshAccessTokenDto,
-  ) {
+  async refreshAccessToken(@Body() refreshAccessTokenDto: RefreshAccessTokenDto) {
     return await this.userService.refreshAccessToken(refreshAccessTokenDto);
+  }
+
+  @Post('forgot-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'Forgot password' })
+  @ApiOkResponse({})
+  async forgotPassword(@Req() req: Request, @Body() createForgotPasswordDto: CreateForgotPasswordDto) {
+    return await this.userService.forgotPassword(req, createForgotPasswordDto);
+  }
+
+  @Post('forgot-password-verify')
+  @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ description: 'Virify forget password code' })
+  @ApiOkResponse({})
+  async forgotPasswordVerify(@Req() req: Request, @Body() verifyUuidDto: VerifyUuidDto) {
+    return await this.userService.forgotPasswordVerify(req, verifyUuidDto);
+  }
+
+  @Post('reset-password')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'Reset password after verify reset password' })
+  @ApiBearerAuth()
+  @ApiHeader({
+    name: 'Bearer',
+    description: 'the token we need for auth',
+  })
+  @ApiOkResponse({})
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return await this.userService.resetPassword(resetPasswordDto);
   }
 }
