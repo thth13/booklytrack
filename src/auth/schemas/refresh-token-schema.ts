@@ -1,31 +1,26 @@
-import { Schema } from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import validator from 'validator';
+import mongoose, { HydratedDocument } from 'mongoose';
+import { User } from 'src/user/schemas/user.schema';
 
-export const RefreshTokenSchema = new Schema(
-  {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    refreshToken: {
-      type: String,
-      required: true,
-    },
-    ip: {
-      type: String,
-      required: true,
-    },
-    browser: {
-      type: String,
-      required: true,
-    },
-    country: {
-      type: String,
-      required: true,
-    },
-  },
-  {
-    versionKey: false,
-    timestamps: true,
-  },
-);
+export type RefreshTokenDocument = HydratedDocument<RefreshToken>;
+
+@Schema()
+export class RefreshToken {
+  @Prop({ required: true, type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  userId: User;
+
+  @Prop({ required: true })
+  refreshToken: string;
+
+  @Prop({ required: true })
+  ip: string;
+
+  @Prop({ required: true })
+  browser: string;
+
+  @Prop({ required: true })
+  country: string;
+}
+
+export const RefreshTokenSchema = SchemaFactory.createForClass(RefreshToken);

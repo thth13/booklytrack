@@ -1,54 +1,43 @@
-import * as mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import validator from 'validator';
+import mongoose, { HydratedDocument } from 'mongoose';
 
-export const ForgotPasswordSchema = new mongoose.Schema(
-  {
-    email: {
-      required: [true, 'EMAIL_IS_BLANK'],
-      type: String,
-      requierd: true,
-    },
-    verification: {
-      type: String,
-      validate: validator.isUUID,
-      requierd: true,
-    },
-    firstUsed: {
-      type: Boolean,
-      default: false,
-    },
-    finalUsed: {
-      type: Boolean,
-      default: false,
-    },
-    expires: {
-      type: Date,
-      requierd: true,
-    },
-    ip: {
-      type: String,
-      requierd: true,
-    },
-    browser: {
-      type: String,
-      requierd: true,
-    },
-    country: {
-      type: String,
-      requierd: true,
-    },
-    ipChanged: {
-      type: String,
-    },
-    browserChanged: {
-      type: String,
-    },
-    countryChanged: {
-      type: String,
-    },
-  },
-  {
-    versionKey: false,
-    timestamps: true,
-  },
-);
+export type ForgotPasswordDocument = HydratedDocument<ForgotPassword>;
+
+@Schema()
+export class ForgotPassword {
+  @Prop({ required: true })
+  email: string;
+
+  @Prop({ required: true, validate: validator.isUUID })
+  verification: string;
+
+  @Prop({ default: false })
+  firstUsed: Boolean;
+
+  @Prop({ default: false })
+  finalUsed: Boolean;
+
+  @Prop({ required: true })
+  expires: Date;
+
+  @Prop({ required: true })
+  ip: String;
+
+  @Prop({ required: true })
+  browser: String;
+
+  @Prop({ required: true })
+  country: String;
+
+  @Prop()
+  ipChanged: String;
+
+  @Prop()
+  browserChanged: String;
+
+  @Prop()
+  countryChanged: String;
+}
+
+export const ForgotPasswordSchema = SchemaFactory.createForClass(ForgotPassword);

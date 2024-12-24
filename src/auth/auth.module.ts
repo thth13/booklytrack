@@ -2,17 +2,16 @@ import { Module } from '@nestjs/common';
 import { PassportModule } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Auth, AuthSchema } from './schemas/auth';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategies/jwt.strategy';
-import { UserSchema } from 'src/user/schemas/user.schema';
-import { RefreshTokenSchema } from './schemas/refresh-token-schema';
+import { User, UserSchema } from 'src/user/schemas/user.schema';
+import { RefreshToken, RefreshTokenSchema } from './schemas/refresh-token-schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: 'User', schema: UserSchema },
-      { name: 'RefreshToken', schema: RefreshTokenSchema },
+      { name: User.name, schema: UserSchema },
+      { name: RefreshToken.name, schema: RefreshTokenSchema },
     ]),
     PassportModule,
     JwtModule.register({
@@ -24,5 +23,3 @@ import { RefreshTokenSchema } from './schemas/refresh-token-schema';
   exports: [AuthService],
 })
 export class AuthModule {}
-
-// MongooseModule.forFeature([{ name: Auth.name, schema: AuthSchema }]),

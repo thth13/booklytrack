@@ -1,76 +1,61 @@
-import * as mongoose from 'mongoose';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import validator from 'validator';
-import * as bcrypt from 'bcrypt';
-const Schema = mongoose.Schema;
+import mongoose, { HydratedDocument } from 'mongoose';
+import { Book } from 'src/book/schemas/book.schema';
 
-export const UserSchema = new mongoose.Schema({
-  userName: {
-    type: String,
-    minlength: 3,
-    maxlength: 255,
-    required: [true, 'NAME_IS_BLANK'],
-  },
-  email: {
-    type: String,
-    lowercase: true,
-    validate: validator.isEmail,
-    maxlength: 255,
-    minlength: 6,
-    required: [true, 'EMAIL_IS_BLANK'],
-  },
-  password: {
-    type: String,
-    minlength: 4,
-    maxlength: 1024,
-    required: [true, 'PASSWORD_IS_BLANK'],
-  },
-  expires: {
-    type: Date,
-    requierd: true,
-  },
-  loginAttempts: {
-    type: Number,
-    default: 0,
-  },
-  blockExpires: {
-    type: Date,
-    default: Date.now,
-  },
-  following: {
-    type: [Schema.Types.ObjectId],
-    ref: 'user',
-  },
-  followers: {
-    type: [Schema.Types.ObjectId],
-    ref: 'user',
-  },
-  read: {
-    type: [Schema.Types.ObjectId],
-    ref: 'books',
-  },
-  reads: {
-    type: [Schema.Types.ObjectId],
-    ref: 'books',
-  },
-  wantsToRead: {
-    type: [Schema.Types.ObjectId],
-    ref: 'books',
-  },
-});
+export type UserDocument = HydratedDocument<User>;
 
-UserSchema.pre('save', async function (next: (err?: Error) => void) {
-  try {
-    if (!this.isModified('password')) {
-      return next();
-    }
+@Schema()
+export class User {
+  @Prop({ required: true, minlength: 3, maxlength: 255 })
+  userName: string;
 
-    // tslint:disable-next-line:no-string-literal
-    const hashed = await bcrypt.hash(this['password'], 10);
-    // tslint:disable-next-line:no-string-literal
-    this['password'] = hashed;
+  @Prop({ required: true, lowercase: true, validate: validator.isEmail, minlength: 6, maxlength: 255 })
+  email: string;
 
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-});
+  @Prop({ required: true, minlength: 4, maxlength: 1024 })
+  password: string;
+
+  @Prop({ required: true })
+  expires: Date;
+
+  @Prop({ default: 0 })
+  loginAttempts: Number;
+
+  @Prop({ default: Date.now })
+  blockExpires: Date;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  following: User;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  followers: User;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
+  read: Book;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
+  reads: Book;
+
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
+  wantsToRead: Book;
+}
+
+export const UserSchema = SchemaFactory.createForClass(User);
+
+// UserSchema.pre('save', async function (next: (err?: Error) => void) {
+//   try {
+//     if (!this.isModified('password')) {
+//       return next();
+//     }
+
+//     // tslint:disable-next-line:no-string-literal
+//     const hashed = await bcrypt.hash(this['password'], 10);
+//     // tslint:disable-next-line:no-string-literal
+//     this['password'] = hashed;
+
+//     return next();
+//   } catch (err) {
+//     return next(err);
+//   }
+// });
