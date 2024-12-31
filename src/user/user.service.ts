@@ -42,7 +42,7 @@ export class UserService {
     await this.passwordsAreMatch(user);
 
     return {
-      userName: user.userName,
+      login: user.login,
       email: user.email,
       accessToken: await this.authService.createAccessToken(user._id),
       refreshToken: await this.authService.createRefreshToken(req, user._id),
@@ -108,7 +108,7 @@ export class UserService {
 
   private buildRegistreationInfo(user: User): any {
     const userRegistrationInfo = {
-      userName: user.userName,
+      login: user.login,
       email: user.email,
     };
 
