@@ -14,6 +14,7 @@ import { ForgotPassword } from './interfaces/forgot-password.interface';
 import { v4 } from 'uuid';
 import { VerifyUuidDto } from './dto/verify-uuid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { Profile } from 'src/profile/interfaces/profile.interface';
 
 @Injectable()
 export class UserService {
@@ -23,6 +24,7 @@ export class UserService {
 
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
+    @InjectModel('Profile') private readonly profileModel: Model<Profile>,
     @InjectModel('ForgotPassword')
     private readonly forgotPasswordModel: Model<ForgotPassword>,
     private readonly authService: AuthService,
@@ -30,9 +32,11 @@ export class UserService {
 
   async create(CreateUserDto: CreateUserDto): Promise<User> {
     const user = new this.userModel(CreateUserDto);
-    await this.isEmailUnique(user.email);
+    await this.isEmailAndLoginUnique(user.email, user.login);
+    const profile = new this.profileModel({ user: user.id });
 
     await user.save();
+    await profile.save();
     return this.buildRegistreationInfo(user);
   }
 
@@ -99,10 +103,10 @@ export class UserService {
   // ╩  ╩╚═╩ ╚╝ ╩ ╩ ╩ ╚═╝  ╩ ╩╚═╝ ╩ ╩ ╩╚═╝═╩╝╚═╝
   // ********************************************
 
-  private async isEmailUnique(email: string) {
-    const user = await this.userModel.findOne({ email });
+  private async isEmailAndLoginUnique(email: string, login: string) {
+    const user = await this.userModel.findOne({ $or: [{ email }, { login }] });
     if (user) {
-      throw new BadRequestException('Email most be unique.');
+      throw new BadRequestException('Email or login most be unique.');
     }
   }
 
