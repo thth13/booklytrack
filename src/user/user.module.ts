@@ -6,6 +6,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './schemas/user.schema';
 import { AuthModule } from 'src/auth/auth.module';
 import { ForgotPassword, ForgotPasswordSchema } from './schemas/forgot-password.schema';
+import { ProfileModule } from 'src/profile/profile.module';
+import { Profile, ProfileSchema } from 'src/profile/schemas/profile.schema';
 
 @Module({
   imports: [
@@ -34,6 +36,7 @@ import { ForgotPassword, ForgotPasswordSchema } from './schemas/forgot-password.
       },
     ]),
     MongooseModule.forFeature([{ name: ForgotPassword.name, schema: ForgotPasswordSchema }]),
+    MongooseModule.forFeature([{ name: Profile.name, schema: ProfileSchema }]),
     AuthModule,
   ],
   controllers: [UserController],
