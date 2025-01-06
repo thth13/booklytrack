@@ -11,30 +11,7 @@ import { Profile, ProfileSchema } from 'src/profile/schemas/profile.schema';
 
 @Module({
   imports: [
-    MongooseModule.forFeatureAsync([
-      {
-        name: User.name,
-        useFactory: () => {
-          const schema = UserSchema;
-          schema.pre('save', async function (next: (err?: Error) => void) {
-            try {
-              if (!this.isModified('password')) {
-                return next();
-              }
-
-              // tslint:disable-next-line:no-string-literal
-              const hashed = await bcrypt.hash(this['password'], 10);
-              // tslint:disable-next-line:no-string-literal
-              this['password'] = hashed;
-
-              return next();
-            } catch (err) {
-              return next(err);
-            }
-          });
-        },
-      },
-    ]),
+    MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     MongooseModule.forFeature([{ name: ForgotPassword.name, schema: ForgotPasswordSchema }]),
     MongooseModule.forFeature([{ name: Profile.name, schema: ProfileSchema }]),
     AuthModule,

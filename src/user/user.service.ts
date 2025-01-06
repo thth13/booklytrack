@@ -1,7 +1,6 @@
 import { Request } from 'express';
 import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
-import { User } from './interfaces/user.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { addHours } from 'date-fns';
 import * as bcrypt from 'bcrypt';
@@ -15,6 +14,7 @@ import { v4 } from 'uuid';
 import { VerifyUuidDto } from './dto/verify-uuid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Profile } from 'src/profile/interfaces/profile.interface';
+import { User } from './interfaces/user.interface';
 
 @Injectable()
 export class UserService {

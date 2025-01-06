@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import validator from 'validator';
 import mongoose, { HydratedDocument } from 'mongoose';
 import { Book } from 'src/book/schemas/book.schema';
+import * as bcrypt from 'bcrypt';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -16,11 +17,8 @@ export class User {
   @Prop({ required: true, minlength: 4, maxlength: 1024 })
   password: string;
 
-  @Prop({ required: true })
-  expires: Date;
-
   @Prop({ default: 0 })
-  loginAttempts: Number;
+  loginAttempts: number;
 
   @Prop({ default: Date.now })
   blockExpires: Date;
@@ -28,19 +26,19 @@ export class User {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 
-// UserSchema.pre('save', async function (next: (err?: Error) => void) {
-//   try {
-//     if (!this.isModified('password')) {
-//       return next();
-//     }
+UserSchema.pre('save', async function (next: (err?: Error) => void) {
+  try {
+    if (!this.isModified('password')) {
+      return next();
+    }
 
-//     // tslint:disable-next-line:no-string-literal
-//     const hashed = await bcrypt.hash(this['password'], 10);
-//     // tslint:disable-next-line:no-string-literal
-//     this['password'] = hashed;
+    // tslint:disable-next-line:no-string-literal
+    const hashed = await bcrypt.hash(this['password'], 10);
+    // tslint:disable-next-line:no-string-literal
+    this['password'] = hashed;
 
-//     return next();
-//   } catch (err) {
-//     return next(err);
-//   }
-// });
+    return next();
+  } catch (err) {
+    return next(err);
+  }
+});

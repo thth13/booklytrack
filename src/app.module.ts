@@ -7,6 +7,13 @@ import { BookSummaryModule } from './book-summary/book-summary.module';
 import { ProfileModule } from './profile/profile.module';
 
 @Module({
-  imports: [MongooseModule.forRoot(process.env.MONGO_URI), AuthModule, UserModule, BookModule, BookSummaryModule, ProfileModule],
+  imports: [
+    MongooseModule.forRoot(process.env.MONGO_URI),
+    AuthModule,
+    UserModule,
+    BookModule,
+    BookSummaryModule,
+    ProfileModule,
+  ],
 })
 export class AppModule {}
