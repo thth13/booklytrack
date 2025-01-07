@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Profile } from './schemas/profile.schema';
 import { Model } from 'mongoose';
@@ -12,6 +12,18 @@ export class ProfileService {
     return await this.profileModel.updateOne({ _id: id }, editProfileDto);
   }
 
+  async getProfile(id: string): Promise<Profile> {
+    return this.findProfileByUser(id);
+  }
+
   async addBook() {}
   async addFollower() {}
+
+  private async findProfileByUser(id: string): Promise<Profile> {
+    try {
+      return await this.profileModel.findOne({ user: id });
+    } catch (err) {
+      throw new NotFoundException('Profile not found.');
+    }
+  }
 }

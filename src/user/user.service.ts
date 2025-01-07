@@ -35,8 +35,8 @@ export class UserService {
     await this.isEmailAndLoginUnique(user.email, user.login);
     const profile = new this.profileModel({ user: user.id });
 
-    await user.save();
     await profile.save();
+    await user.save();
     return this.buildRegistreationInfo(user);
   }
 
