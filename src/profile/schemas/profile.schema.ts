@@ -7,13 +7,13 @@ export type ProfileDocument = HydratedDocument<Profile>;
 
 @Schema()
 export class Profile {
-  @Prop({ minlength: 3, maxlength: 255 })
+  @Prop({ maxlength: 255 })
   fullName: string;
 
   @Prop()
   avatar: string;
 
-  @Prop({ minlength: 3, maxlength: 2048 })
+  @Prop({ maxlength: 2048 })
   description: string;
 
   @Prop({ default: 0 })
