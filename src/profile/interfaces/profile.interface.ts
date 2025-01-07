@@ -1,4 +1,5 @@
-import { Document, Types } from 'mongoose';
+import { Document } from 'mongoose';
+import { Book } from 'src/book/interfaces/book.interface';
 import { User } from 'src/user/interfaces/user.interface';
 
 export interface Profile extends Document {
@@ -9,7 +10,7 @@ export interface Profile extends Document {
   user: User;
   following: User;
   followers: User;
-  read: [Types.ObjectId];
-  reads: [Types.ObjectId];
-  wantsToRead: [Types.ObjectId];
+  read: Book;
+  reads: Book;
+  wantsToRead: Book;
 }
