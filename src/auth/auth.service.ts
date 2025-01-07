@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import Cryptr = require('cryptr');
 import { Model } from 'mongoose';
 import { Request } from 'express';
-import { sign } from 'jsonwebtoken';
+import { JwtPayload, sign } from 'jsonwebtoken';
 import { InjectModel } from '@nestjs/mongoose';
 import { getClientIp } from 'request-ip';
 import { User } from 'src/user/interfaces/user.interface';
@@ -54,6 +54,16 @@ export class AuthService {
     }
 
     return refreshToken.userId;
+  }
+
+  async validateUser(jwtPayload: JwtPayload): Promise<User> {
+    const user = await this.userModel.findOne({ _id: jwtPayload.userId });
+
+    if (!user) {
+      throw new UnauthorizedException('User not found.');
+    }
+
+    return user;
   }
 
   private jwtExtractor(req: Request) {
