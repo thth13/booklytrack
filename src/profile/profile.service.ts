@@ -9,7 +9,7 @@ export class ProfileService {
   constructor(@InjectModel('Profile') private readonly profileModel: Model<Profile>) {}
 
   async editProfile(id: string, editProfileDto: EditProfileDto) {
-    return await this.profileModel.updateOne({ _id: id }, editProfileDto);
+    return await this.profileModel.findOneAndUpdate({ user: id }, editProfileDto);
   }
 
   async getProfile(id: string): Promise<Profile> {
