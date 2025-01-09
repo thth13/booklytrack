@@ -1,7 +1,7 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Put, Request, UseGuards } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { AuthGuard } from '@nestjs/passport';
 import { EditProfileDto } from './dto/edit-profile-dto';
+import { CheckAccessGuard } from 'src/auth/guards/checkAccess.guard';
 
 @Controller('profile')
 export class ProfileController {
@@ -9,14 +9,13 @@ export class ProfileController {
 
   @Put(':id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard('jwt'))
-  async editProfile(@Param() params, @Body() editProfileDto: EditProfileDto) {
-    return await this.profileService.editProfile(params.id, editProfileDto);
+  @UseGuards(CheckAccessGuard)
+  async editProfile(@Request() req, @Body() editProfileDto: EditProfileDto) {
+    return await this.profileService.editProfile(req.params.id, editProfileDto);
   }
 
   @Get(':id')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(AuthGuard('jwt'))
   async getProfile(@Param() params) {
     return await this.profileService.getProfile(params.id);
   }
