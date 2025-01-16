@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Profile } from './schemas/profile.schema';
 import { Model } from 'mongoose';
 import { EditProfileDto } from './dto/edit-profile-dto';
+import { ReadCategory } from 'src/types';
 
 @Injectable()
 export class ProfileService {
@@ -16,7 +17,10 @@ export class ProfileService {
     return this.findProfileByUser(id);
   }
 
-  async addBook() {}
+  async addReadBook(readCategory: ReadCategory, bookId: string, profileId: string) {
+    return await this.profileModel.findOneAndUpdate({ _id: profileId }, { $push: { [readCategory]: bookId } });
+  }
+
   async addFollower() {}
 
   private async findProfileByUser(id: string): Promise<Profile> {
