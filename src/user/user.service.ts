@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { BadRequestException, ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { addHours } from 'date-fns';
@@ -122,7 +122,7 @@ export class UserService {
   private async findUserByEmail(email: string): Promise<User> {
     const user = await this.userModel.findOne({ email });
     if (!user) {
-      throw new NotFoundException('Wrong email or password.');
+      throw new UnauthorizedException('Wrong email or password.');
     }
     return user;
   }
@@ -131,7 +131,7 @@ export class UserService {
     const user = await this.userModel.findOne({ email });
 
     if (!user) {
-      throw new NotFoundException('Email not found.');
+      throw new UnauthorizedException('Email not found.');
     }
 
     return user;
@@ -142,7 +142,7 @@ export class UserService {
 
     if (!match) {
       await this.passwordsDoNotMatch(user);
-      throw new NotFoundException('Wrong email or password.');
+      throw new UnauthorizedException('Wrong email or password.');
     }
 
     return match;
