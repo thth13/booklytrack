@@ -8,6 +8,7 @@ import { BookModule } from './book/book.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  app.setGlobalPrefix('api');
 
   const options = new DocumentBuilder()
     .setTitle('API')
@@ -20,7 +21,7 @@ async function bootstrap() {
   });
   SwaggerModule.setup('api', app, document);
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = process.env.PORT || 8000;
   await app.listen(PORT);
 }
 bootstrap();
