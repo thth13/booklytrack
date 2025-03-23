@@ -32,7 +32,7 @@ export class UserService {
 
   async create(CreateUserDto: CreateUserDto): Promise<User> {
     const user = new this.userModel(CreateUserDto);
-    await this.isEmailAndLoginUnique(user.email, user.login);
+    await this.isEmailUnique(user.email);
     const profile = new this.profileModel({ user: user.id });
 
     await profile.save();
@@ -103,10 +103,10 @@ export class UserService {
   // ╩  ╩╚═╩ ╚╝ ╩ ╩ ╩ ╚═╝  ╩ ╩╚═╝ ╩ ╩ ╩╚═╝═╩╝╚═╝
   // ********************************************
 
-  private async isEmailAndLoginUnique(email: string, login: string) {
-    const user = await this.userModel.findOne({ $or: [{ email }, { login }] });
+  private async isEmailUnique(email: string) {
+    const user = await this.userModel.findOne({ email });
     if (user) {
-      throw new BadRequestException('Email or login most be unique.');
+      throw new BadRequestException('Email most be unique.');
     }
   }
 
