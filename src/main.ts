@@ -1,4 +1,5 @@
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BookSummaryModule } from './book-summary/book-summary.module';
@@ -9,6 +10,7 @@ import { BookModule } from './book/book.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.useGlobalPipes(new ValidationPipe());
 
   const options = new DocumentBuilder()
     .setTitle('API')
@@ -20,6 +22,13 @@ async function bootstrap() {
     include: [BookSummaryModule, BookModule, ProfileModule, UserModule],
   });
   SwaggerModule.setup('api', app, document);
+
+  app.enableCors({
+    origin: [process.env.FRONTEND_URL || 'http://localhost:3000'],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  });
 
   const PORT = process.env.PORT || 8000;
   await app.listen(PORT);

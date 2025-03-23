@@ -9,7 +9,6 @@ export class CreateUserDto {
     minLength: 4,
     maxLength: 255,
   })
-  @IsNotEmpty()
   @IsString()
   @MinLength(4)
   @MaxLength(255)
@@ -23,7 +22,6 @@ export class CreateUserDto {
     minLength: 5,
     maxLength: 255,
   })
-  @IsNotEmpty()
   @IsString()
   @MinLength(5)
   @MaxLength(255)
@@ -38,7 +36,6 @@ export class CreateUserDto {
     maxLength: 1024,
   })
   @ApiProperty()
-  @IsNotEmpty()
   @IsString()
   @MinLength(4)
   @MaxLength(1024)
