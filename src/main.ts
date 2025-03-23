@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { ValidationPipe, BadRequestException, ValidationError } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { BookSummaryModule } from './book-summary/book-summary.module';
@@ -7,10 +7,31 @@ import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
 
+interface ValidationErrors {
+  [key: string]: string;
+}
+
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      dismissDefaultMessages: false,
+      validationError: {
+        target: false,
+        value: false,
+      },
+      exceptionFactory: (errors: ValidationError[]): BadRequestException => {
+        const result = errors.reduce<ValidationErrors>((acc, error) => {
+          acc[error.property] = error.constraints ? Object.values(error.constraints)[0] : 'Validation error';
+          return acc;
+        }, {});
+        return new BadRequestException(result);
+      },
+    }),
+  );
 
   const options = new DocumentBuilder()
     .setTitle('API')
