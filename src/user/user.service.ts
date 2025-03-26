@@ -106,7 +106,7 @@ export class UserService {
   private async isEmailUnique(email: string) {
     const user = await this.userModel.findOne({ email });
     if (user) {
-      throw new BadRequestException('Email most be unique.');
+      throw new BadRequestException({ email: 'Email most be unique' });
     }
   }
 
