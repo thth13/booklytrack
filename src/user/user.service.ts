@@ -46,6 +46,7 @@ export class UserService {
     await this.passwordsAreMatch(user);
 
     return {
+      id: user._id,
       login: user.login,
       email: user.email,
       accessToken: await this.authService.createAccessToken(user._id),
@@ -141,21 +142,23 @@ export class UserService {
     const match = await bcrypt.compare(attemptPass, user.password);
 
     if (!match) {
-      await this.passwordsDoNotMatch(user);
-      throw new UnauthorizedException('Wrong email or password.');
+      throw new UnauthorizedException({
+        email: 'Wrong email or password',
+        password: 'Wrong email or password',
+      });
     }
 
     return match;
   }
 
-  private async passwordsDoNotMatch(user: User) {
-    user.loginAttempts += 1;
-    await user.save();
-    if (user.loginAttempts >= this.LOGIN_ATTEMPTS_TO_BLOCK) {
-      await this.blockUser(user);
-      throw new ConflictException('Too many attempts. User blocked.');
-    }
-  }
+  // private async passwordsDoNotMatch(user: User) {
+  //   user.loginAttempts += 1;
+  //   await user.save();
+  //   if (user.loginAttempts >= this.LOGIN_ATTEMPTS_TO_BLOCK) {
+  //     await this.blockUser(user);
+  //     throw new ConflictException('Too many attempts. User blocked.');
+  //   }
+  // }
 
   private async blockUser(user: User) {
     user.blockExpires = addHours(new Date(), this.HOURS_TO_BLOCK);
