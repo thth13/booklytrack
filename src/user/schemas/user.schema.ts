@@ -8,9 +8,6 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema()
 export class User {
-  @Prop({ minlength: 3, maxlength: 255 })
-  login: string;
-
   @Prop({ required: true, lowercase: true, validate: validator.isEmail, minlength: 6, maxlength: 255, unique: true })
   email: string;
 

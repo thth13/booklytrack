@@ -14,7 +14,7 @@ import { v4 } from 'uuid';
 import { VerifyUuidDto } from './dto/verify-uuid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Profile } from 'src/profile/interfaces/profile.interface';
-import { User } from './interfaces/user.interface';
+import { User, UserLoginInfo } from './interfaces/user.interface';
 
 @Injectable()
 export class UserService {
@@ -30,28 +30,23 @@ export class UserService {
     private readonly authService: AuthService,
   ) {}
 
-  async create(CreateUserDto: CreateUserDto): Promise<User> {
+  async create(req: Request, CreateUserDto: CreateUserDto): Promise<UserLoginInfo> {
     const user = new this.userModel(CreateUserDto);
     await this.isEmailUnique(user.email);
-    const profile = new this.profileModel({ user: user.id });
+    const profile = new this.profileModel({ user: user.id, name: CreateUserDto.name });
 
     await profile.save();
     await user.save();
-    return this.buildRegistreationInfo(user);
+
+    return await this.buildLoginInfo(req, user);
   }
 
-  async login(req: Request, loginUserDto: LoginUserDto) {
+  async login(req: Request, loginUserDto: LoginUserDto): Promise<UserLoginInfo> {
     const user = await this.findUserByEmail(loginUserDto.email);
     await this.checkPassword(loginUserDto.password, user);
     await this.passwordsAreMatch(user);
 
-    return {
-      id: user._id,
-      login: user.login,
-      email: user.email,
-      accessToken: await this.authService.createAccessToken(user._id),
-      refreshToken: await this.authService.createRefreshToken(req, user._id),
-    };
+    return await this.buildLoginInfo(req, user);
   }
 
   async refreshAccessToken(refreshAccessTokenDto: RefreshAccessTokenDto) {
@@ -111,13 +106,15 @@ export class UserService {
     }
   }
 
-  private buildRegistreationInfo(user: User): any {
-    const userRegistrationInfo = {
-      login: user.login,
+  private async buildLoginInfo(req: Request, user: User): Promise<UserLoginInfo> {
+    const userLoginInfo = {
+      id: user._id,
       email: user.email,
+      accessToken: await this.authService.createAccessToken(user._id),
+      refreshToken: await this.authService.createRefreshToken(req, user._id),
     };
 
-    return userRegistrationInfo;
+    return userLoginInfo;
   }
 
   private async findUserByEmail(email: string): Promise<User> {

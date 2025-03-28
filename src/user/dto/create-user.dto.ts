@@ -12,7 +12,7 @@ export class CreateUserDto {
   @IsString()
   @MinLength(4)
   @MaxLength(255)
-  readonly login: string;
+  readonly name: string;
 
   @ApiProperty({
     example: 'mymail@gmail.com',

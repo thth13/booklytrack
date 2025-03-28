@@ -3,7 +3,7 @@ import { Book } from 'src/book/interfaces/book.interface';
 import { User } from 'src/user/interfaces/user.interface';
 
 export interface Profile extends Document {
-  fullName: string;
+  name: string;
   avatar: string;
   description: string;
   views: number;

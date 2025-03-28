@@ -10,7 +10,7 @@ export class EditProfileDto {
   })
   @IsString()
   @MaxLength(255)
-  readonly fullName: string;
+  readonly name: string;
 
   @ApiProperty({
     example: 'URL',
