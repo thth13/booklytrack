@@ -6,6 +6,7 @@ import { BookSummaryModule } from './book-summary/book-summary.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
+import { json, urlencoded } from 'express';
 
 interface ValidationErrors {
   [key: string]: string;
@@ -50,6 +51,9 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
+
+  app.use(json({ limit: '5mb' }));
+  app.use(urlencoded({ limit: '5mb', extended: true }));
 
   const PORT = process.env.PORT || 8000;
   await app.listen(PORT);

@@ -4,12 +4,20 @@ import { Profile } from './schemas/profile.schema';
 import { Model } from 'mongoose';
 import { EditProfileDto } from './dto/edit-profile-dto';
 import { ReadCategory } from 'src/types';
+import sharp from 'sharp';
+import { join } from 'path';
+import { randomUUID } from 'crypto';
+import * as fs from 'fs';
 
 @Injectable()
 export class ProfileService {
   constructor(@InjectModel('Profile') private readonly profileModel: Model<Profile>) {}
 
-  async editProfile(id: string, editProfileDto: EditProfileDto) {
+  async editProfile(id: string, editProfileDto: EditProfileDto, avatar?: Express.Multer.File) {
+    if (avatar) {
+      editProfileDto.avatar = await this.compressAndSaveAvatar(avatar);
+    }
+
     return await this.profileModel.findOneAndUpdate({ user: id }, editProfileDto);
   }
 
@@ -29,5 +37,19 @@ export class ProfileService {
     } catch (err) {
       throw new NotFoundException('Profile not found.');
     }
+  }
+
+  private async compressAndSaveAvatar(avatar: Express.Multer.File) {
+    const uniqueFileName = `${randomUUID()}.webp`;
+    const outputDir = join(process.cwd(), 'avatars');
+    const outputPath = join(outputDir, uniqueFileName);
+
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir, { recursive: true });
+    }
+
+    await sharp(avatar.buffer).webp({ quality: 30 }).toFile(outputPath);
+
+    return uniqueFileName;
   }
 }

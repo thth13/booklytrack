@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
@@ -9,6 +11,10 @@ import { ProfileModule } from './profile/profile.module';
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.MONGO_URI),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'avatars'),
+      serveRoot: '/avatar',
+    }),
     AuthModule,
     UserModule,
     BookModule,

@@ -1,8 +1,22 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+  Request,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ProfileService } from './profile.service';
 import { EditProfileDto } from './dto/edit-profile-dto';
 import { CheckAccessGuard } from 'src/auth/guards/checkAccess.guard';
 import { ReadCategory } from 'src/types';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @Controller('profile')
 export class ProfileController {
@@ -11,8 +25,22 @@ export class ProfileController {
   @Put(':id')
   @HttpCode(HttpStatus.OK)
   @UseGuards(CheckAccessGuard)
-  async editProfile(@Request() req, @Body() editProfileDto: EditProfileDto) {
-    return await this.profileService.editProfile(req.params.id, editProfileDto);
+  @UseInterceptors(
+    FileInterceptor('avatar', {
+      limits: {
+        fileSize: 5 * 1024 * 1024, // 5MB in bytes
+      },
+      fileFilter: (_, file, cb) => {
+        if (file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+          cb(null, true);
+        } else {
+          cb(new Error('Unsupported file type'), false);
+        }
+      },
+    }),
+  )
+  async editProfile(@Request() req, @Body() editProfileDto: EditProfileDto, @UploadedFile() file: Express.Multer.File) {
+    return await this.profileService.editProfile(req.params.id, editProfileDto, file);
   }
 
   @Get(':id')

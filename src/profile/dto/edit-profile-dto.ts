@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MaxLength, MinLength } from 'class-validator';
+import { IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
 
 export class EditProfileDto {
   @ApiProperty({
@@ -12,13 +12,8 @@ export class EditProfileDto {
   @MaxLength(255)
   readonly name: string;
 
-  @ApiProperty({
-    example: 'URL',
-    description: 'Avatar url',
-    format: 'string',
-  })
-  @IsString()
-  readonly avatar: string;
+  @IsOptional()
+  avatar?: string;
 
   @ApiProperty({
     example: 'My profile description',
