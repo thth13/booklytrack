@@ -17,6 +17,8 @@ import { EditProfileDto } from './dto/edit-profile-dto';
 import { CheckAccessGuard } from 'src/auth/guards/checkAccess.guard';
 import { ReadCategory } from 'src/types';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Book } from 'src/book/interfaces/book.interface';
+import { AddBookDto } from './dto/add-book.dto';
 
 @Controller('profile')
 export class ProfileController {
@@ -51,7 +53,7 @@ export class ProfileController {
 
   @Post('add-read-book')
   @HttpCode(HttpStatus.OK)
-  async addBook(@Request() req, @Body() readCategory: ReadCategory, bookId: string, profileId: string) {
-    return await this.profileService.addReadBook(readCategory, bookId, profileId);
+  async addBook(@Body() addBookDto: AddBookDto) {
+    return await this.profileService.addReadBook(addBookDto);
   }
 }

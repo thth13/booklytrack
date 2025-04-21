@@ -5,6 +5,9 @@ export type BookDocument = HydratedDocument<Book>;
 
 @Schema()
 export class Book {
+  @Prop({ type: String })
+  _id: string;
+
   @Prop()
   title: string;
 
@@ -12,13 +15,22 @@ export class Book {
   description: string;
 
   @Prop()
-  author: string;
+  authors: string[];
 
   @Prop()
   cover: string;
 
   @Prop()
-  isbn: string;
+  googleId: string;
+
+  @Prop()
+  categories: string[];
+
+  @Prop()
+  publisher: string;
+
+  @Prop()
+  publishedDate: Date;
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);

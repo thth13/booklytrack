@@ -20,22 +20,22 @@ export class Profile {
   views: number;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  user: User;
+  user: User[];
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
-  following: User;
+  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User' })
+  following: User[];
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
-  followers: User;
+  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User' })
+  followers: User[];
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
-  read: Book;
+  @Prop({ type: [String], ref: 'Book' })
+  read: string[];
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
-  reads: Book;
+  @Prop({ type: [String], ref: 'Book' })
+  reads: string[];
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
-  wantsToRead: Book;
+  @Prop({ type: [String], ref: 'Book' })
+  wantsToRead: string[];
 }
 
 export const ProfileSchema = SchemaFactory.createForClass(Profile);
