@@ -29,10 +29,10 @@ export class Profile {
   followers: User[];
 
   @Prop({ type: [String], ref: 'Book' })
-  read: string[];
+  reading: string[];
 
   @Prop({ type: [String], ref: 'Book' })
-  reads: string[];
+  finished: string[];
 
   @Prop({ type: [String], ref: 'Book' })
   wantsToRead: string[];

@@ -1,5 +1,5 @@
 export enum ReadCategory {
-  READ = 'read',
-  READS = 'reads',
-  WANT_READ = 'wantsToRead',
+  READING = 'reading',
+  FINISHED = 'finished',
+  WANTS_READ = 'wantsToRead',
 }

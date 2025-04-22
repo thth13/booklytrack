@@ -10,7 +10,7 @@ export interface Profile extends Document {
   user: User;
   following: User;
   followers: User;
-  read: string[];
-  reads: string[];
+  reading: string[];
+  finished: string[];
   wantsToRead: string[];
 }

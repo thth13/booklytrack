@@ -15,9 +15,7 @@ import {
 import { ProfileService } from './profile.service';
 import { EditProfileDto } from './dto/edit-profile-dto';
 import { CheckAccessGuard } from 'src/auth/guards/checkAccess.guard';
-import { ReadCategory } from 'src/types';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Book } from 'src/book/interfaces/book.interface';
 import { AddBookDto } from './dto/add-book.dto';
 
 @Controller('profile')
@@ -55,5 +53,11 @@ export class ProfileController {
   @HttpCode(HttpStatus.OK)
   async addBook(@Body() addBookDto: AddBookDto) {
     return await this.profileService.addReadBook(addBookDto);
+  }
+
+  @Get('get-read-books/:userId/:readCategory')
+  @HttpCode(HttpStatus.OK)
+  async getReadBooks(@Param() params): Promise<String[]> {
+    return await this.profileService.getReadBooks(params.userId, params.readCategory);
   }
 }

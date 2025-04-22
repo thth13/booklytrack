@@ -7,8 +7,9 @@ import sharp from 'sharp';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
-import { Book } from 'src/book/interfaces/book.interface';
+import { Book } from 'src/book/schemas/book.schema';
 import { AddBookDto } from './dto/add-book.dto';
+import { ReadCategory } from 'src/types';
 
 @Injectable()
 export class ProfileService {
@@ -45,13 +46,17 @@ export class ProfileService {
     );
   }
 
+  async getReadBooks(userId: string, readCategory: ReadCategory): Promise<String[]> {
+    const books = await this.profileModel.findOne({ user: userId }).select(readCategory).populate(readCategory);
+
+    return books ? books[readCategory] : [];
+  }
+
   async addFollower() {}
 
   private async findProfileByUser(id: string): Promise<Profile> {
     try {
-      const kek = await this.profileModel.findOne({ user: id }).populate('read').exec();
-      // console.log(kek);
-      return kek;
+      return await this.profileModel.findOne({ user: id }).exec();
     } catch (err) {
       throw new NotFoundException('Profile not found.');
     }
