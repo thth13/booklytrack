@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsObject, IsString } from 'class-validator';
+import { IsObject, IsString, IsOptional } from 'class-validator';
 import { Book } from 'src/book/interfaces/book.interface';
 import { ReadCategory } from 'src/types';
 
@@ -17,6 +17,15 @@ export class AddBookDto {
   })
   @IsObject()
   readonly book: Book;
+
+  @ApiProperty({
+    example: 'wantsToRead',
+    description: 'Old Category',
+    format: 'string',
+    required: false,
+  })
+  @IsOptional()
+  readonly oldCategory?: ReadCategory;
 
   @ApiProperty({
     example: 'Read',

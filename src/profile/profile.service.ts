@@ -7,7 +7,7 @@ import sharp from 'sharp';
 import { join } from 'path';
 import { randomUUID } from 'crypto';
 import * as fs from 'fs';
-import { Book } from 'src/book/schemas/book.schema';
+import { Book } from 'src/book/interfaces/book.interface';
 import { AddBookDto } from './dto/add-book.dto';
 import { ReadCategory } from 'src/types';
 
@@ -31,17 +31,15 @@ export class ProfileService {
   }
 
   async addReadBook(addBookDto: AddBookDto) {
-    const { book, userId, readCategory } = addBookDto;
+    const { book, userId, readCategory, oldCategory } = addBookDto;
+    const bookId = book.googleId || book.id;
 
-    const bookExists = await this.bookModel.exists({ _id: book.googleId });
-
-    if (!bookExists) {
-      await this.bookModel.create({ ...book, _id: book.googleId });
-    }
+    await this.checkBookExists(book, bookId);
+    await this.checkOldCategory(oldCategory, userId, bookId);
 
     return await this.profileModel.findOneAndUpdate(
       { user: userId },
-      { $push: { [readCategory]: book.googleId } },
+      { $push: { [readCategory]: bookId } },
       { new: true },
     );
   }
@@ -74,5 +72,19 @@ export class ProfileService {
     await sharp(avatar.buffer).webp({ quality: 30 }).toFile(outputPath);
 
     return uniqueFileName;
+  }
+
+  private async checkBookExists(book: Book, bookId: string) {
+    const bookExists = await this.bookModel.exists({ _id: bookId });
+
+    if (!bookExists) {
+      await this.bookModel.create({ ...book, _id: book.googleId });
+    }
+  }
+
+  private async checkOldCategory(oldCategory: string, userId: string, bookId: string) {
+    if (oldCategory) {
+      await this.profileModel.findOneAndUpdate({ user: userId }, { $pull: { [oldCategory]: bookId } });
+    }
   }
 }
