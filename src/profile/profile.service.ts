@@ -37,11 +37,15 @@ export class ProfileService {
     await this.checkBookExists(book, bookId);
     await this.checkOldCategory(oldCategory, userId, bookId);
 
-    return await this.profileModel.findOneAndUpdate(
-      { user: userId },
-      { $push: { [readCategory]: bookId } },
-      { new: true },
-    );
+    if (readCategory) {
+      return await this.profileModel.findOneAndUpdate(
+        { user: userId },
+        { $push: { [readCategory]: bookId } },
+        { new: true },
+      );
+    }
+
+    return await this.profileModel.findOne({ user: userId });
   }
 
   async getReadBooks(userId: string, readCategory: ReadCategory): Promise<String[]> {

@@ -32,6 +32,6 @@ export class AddBookDto {
     description: 'Read category of book',
     format: 'string',
   })
-  @IsString()
-  readonly readCategory: ReadCategory;
+  @IsOptional()
+  readonly readCategory?: ReadCategory;
 }
