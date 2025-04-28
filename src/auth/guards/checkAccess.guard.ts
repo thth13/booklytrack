@@ -10,8 +10,9 @@ export class CheckAccessGuard extends AuthGuard('jwt') {
 
   handleRequest(err, user, info: Error, context: ExecutionContext) {
     const request = context.switchToHttp().getRequest();
+    const requestUserId = request.params?.userId || request.body?.userId;
 
-    if (request.params.id !== user.id) {
+    if (requestUserId !== user.id) {
       throw new UnauthorizedException();
     }
 

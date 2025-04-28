@@ -22,7 +22,7 @@ import { AddBookDto } from './dto/add-book.dto';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  @Put(':id')
+  @Put(':userId')
   @HttpCode(HttpStatus.OK)
   @UseGuards(CheckAccessGuard)
   @UseInterceptors(
@@ -40,7 +40,7 @@ export class ProfileController {
     }),
   )
   async editProfile(@Request() req, @Body() editProfileDto: EditProfileDto, @UploadedFile() file: Express.Multer.File) {
-    return await this.profileService.editProfile(req.params.id, editProfileDto, file);
+    return await this.profileService.editProfile(req.params.userId, editProfileDto, file);
   }
 
   @Get(':id')

@@ -11,14 +11,14 @@ export class BookSummaryController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  // @UseGuards(CheckAccessGuard)
+  @UseGuards(CheckAccessGuard)
   async addBookEntry(@Body() addBookEntryDto: AddBookEntryDto) {
     return await this.bookSummaryService.addBookEntry(addBookEntryDto);
   }
 
   @Delete(':userId/:bookId/:summaryIndex')
   @HttpCode(HttpStatus.OK)
-  // @UseGuards(CheckAccessGuard)
+  @UseGuards(CheckAccessGuard)
   async deleteBookEntry(
     @Param('userId') userId: string,
     @Param('bookId') bookId: string,

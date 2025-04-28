@@ -10,7 +10,6 @@ export class BookSummaryService {
   constructor(@InjectModel('BookSummary') private readonly bookSummaryModel: Model<BookSummary>) {}
 
   async getBookSummary(userId: string, bookId: string) {
-    console.log(await this.bookSummaryModel.findOne({ user: userId, book: bookId }));
     return await this.bookSummaryModel.findOne({ user: userId, book: bookId });
   }
 
