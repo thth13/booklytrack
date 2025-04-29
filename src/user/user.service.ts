@@ -120,7 +120,10 @@ export class UserService {
   private async findUserByEmail(email: string): Promise<User> {
     const user = await this.userModel.findOne({ email });
     if (!user) {
-      throw new UnauthorizedException('Wrong email or password.');
+      throw new UnauthorizedException({
+        email: 'Wrong email or password',
+        password: 'Wrong email or password',
+      });
     }
     return user;
   }
