@@ -21,9 +21,6 @@ export class Book {
   cover: string;
 
   @Prop()
-  googleId: string;
-
-  @Prop()
   categories: string[];
 
   @Prop()
