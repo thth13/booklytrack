@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Post, Put, UseGuards } from '@nestjs/common';
 import { BookSummaryService } from './book-summary.service';
 import { CheckAccessGuard } from 'src/auth/guards/checkAccess.guard';
 import { AddBookEntryDto } from './dto/add-book-entry.dto';
@@ -25,6 +25,24 @@ export class BookSummaryController {
     @Param('summaryIndex') summaryIndex: number,
   ) {
     return await this.bookSummaryService.deleteBookEntry(userId, bookId, summaryIndex, BookEntryActionType.SUMMARY);
+  }
+
+  @Put(':userId/:bookId/:summaryIndex')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(CheckAccessGuard)
+  async editBookEntry(
+    @Param('userId') userId: string,
+    @Param('bookId') bookId: string,
+    @Param('summaryIndex') summaryIndex: number,
+    @Body('newValue') newValue: string,
+  ) {
+    return await this.bookSummaryService.editBookEntry(
+      userId,
+      bookId,
+      summaryIndex,
+      BookEntryActionType.SUMMARY,
+      newValue,
+    );
   }
 
   @Get(':userId/:bookId')

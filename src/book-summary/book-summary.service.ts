@@ -27,6 +27,28 @@ export class BookSummaryService {
     return await bookSummary.save();
   }
 
+  async editBookEntry(
+    userId: string,
+    bookId: string,
+    summaryIndex: number,
+    actionType: BookEntryActionType,
+    newValue: string,
+  ) {
+    const bookSummary = await this.bookSummaryModel.findOne({ user: userId, book: bookId });
+
+    if (!bookSummary) {
+      throw new Error('Book summary not found for the given user and book.');
+    }
+
+    if (summaryIndex < 0 || summaryIndex >= bookSummary[actionType].length) {
+      throw new Error('Invalid entry index.');
+    }
+
+    bookSummary[actionType][summaryIndex] = newValue;
+
+    return await bookSummary.save();
+  }
+
   async deleteBookEntry(userId: string, bookId: string, summaryIndex: number, actionType: BookEntryActionType) {
     const bookSummary = await this.bookSummaryModel.findOne({ user: userId, book: bookId });
 
