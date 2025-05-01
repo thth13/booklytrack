@@ -1,16 +1,14 @@
-import { Document } from 'mongoose';
-import { Book } from 'src/book/interfaces/book.interface';
-import { User } from 'src/user/interfaces/user.interface';
+import { Document, Types } from 'mongoose';
 
 export interface Profile extends Document {
   name: string;
   avatar: string;
   description: string;
   views: number;
-  user: User;
-  following: User;
-  followers: User;
-  reading: string[];
-  finished: string[];
-  wantsToRead: string[];
+  user: Types.ObjectId;
+  following: Types.ObjectId[];
+  followers: Types.ObjectId[];
+  reading: Types.ObjectId[];
+  finished: Types.ObjectId[];
+  wantsToRead: Types.ObjectId[];
 }

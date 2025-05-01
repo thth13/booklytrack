@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Profile } from './schemas/profile.schema';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { EditProfileDto } from './dto/edit-profile-dto';
 import sharp from 'sharp';
 import { join } from 'path';
@@ -31,10 +31,8 @@ export class ProfileService {
   }
 
   async addReadBook(addBookDto: AddBookDto) {
-    const { book, userId, readCategory, oldCategory } = addBookDto;
-    const bookId = book.googleId || book.id;
+    const { bookId, userId, readCategory, oldCategory } = addBookDto;
 
-    await this.checkBookExists(book, bookId);
     await this.checkOldCategory(oldCategory, userId, bookId);
 
     if (readCategory) {
@@ -48,7 +46,7 @@ export class ProfileService {
     return await this.profileModel.findOne({ user: userId });
   }
 
-  async getReadBooks(userId: string, readCategory: ReadCategory): Promise<String[]> {
+  async getReadBooks(userId: string, readCategory: ReadCategory): Promise<Object[]> {
     const books = await this.profileModel.findOne({ user: userId }).select(readCategory).populate(readCategory);
 
     return books ? books[readCategory] : [];
@@ -78,13 +76,13 @@ export class ProfileService {
     return uniqueFileName;
   }
 
-  private async checkBookExists(book: Book, bookId: string) {
-    const bookExists = await this.bookModel.exists({ _id: bookId });
+  // private async checkBookExists(book: Book, bookId: string) {
+  //   const bookExists = await this.bookModel.exists({ _id: bookId });
 
-    if (!bookExists) {
-      await this.bookModel.create({ ...book, _id: book.googleId });
-    }
-  }
+  //   if (!bookExists) {
+  //     await this.bookModel.create({ ...book, _id: book.googleId });
+  //   }
+  // }
 
   private async checkOldCategory(oldCategory: string, userId: string, bookId: string) {
     if (oldCategory) {

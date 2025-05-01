@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { ImageLinks } from '../interfaces/book.interface';
 
 export type BookDocument = HydratedDocument<Book>;
 
 @Schema()
 export class Book {
-  @Prop({ type: String })
-  _id: string;
+  @Prop({ unique: true, index: true })
+  googleId: string;
 
   @Prop()
   title: string;
@@ -14,13 +15,13 @@ export class Book {
   @Prop()
   description: string;
 
-  @Prop()
+  @Prop([String])
   authors: string[];
 
-  @Prop()
-  cover: string;
+  @Prop({ type: Object })
+  imageLinks: ImageLinks;
 
-  @Prop()
+  @Prop([String])
   categories: string[];
 
   @Prop()

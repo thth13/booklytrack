@@ -57,7 +57,7 @@ export class ProfileController {
 
   @Get('get-read-books/:userId/:readCategory')
   @HttpCode(HttpStatus.OK)
-  async getReadBooks(@Param() params): Promise<String[]> {
+  async getReadBooks(@Param() params): Promise<Object[]> {
     return await this.profileService.getReadBooks(params.userId, params.readCategory);
   }
 }

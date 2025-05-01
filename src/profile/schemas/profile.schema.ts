@@ -1,7 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import mongoose, { HydratedDocument } from 'mongoose';
-import { Book } from 'src/book/schemas/book.schema';
-import { User } from 'src/user/schemas/user.schema';
+import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export type ProfileDocument = HydratedDocument<Profile>;
 
@@ -20,22 +18,22 @@ export class Profile {
   views: number;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
-  user: User[];
+  user: Types.ObjectId;
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User' })
-  following: User[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  following: Types.ObjectId[];
 
-  @Prop({ type: [mongoose.Schema.Types.ObjectId], ref: 'User' })
-  followers: User[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }] })
+  followers: Types.ObjectId[];
 
-  @Prop({ type: [String], ref: 'Book' })
-  reading: string[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
+  reading: Types.ObjectId[];
 
-  @Prop({ type: [String], ref: 'Book' })
-  finished: string[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
+  finished: Types.ObjectId[];
 
-  @Prop({ type: [String], ref: 'Book' })
-  wantsToRead: string[];
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }] })
+  wantsToRead: Types.ObjectId[];
 }
 
 export const ProfileSchema = SchemaFactory.createForClass(Profile);
