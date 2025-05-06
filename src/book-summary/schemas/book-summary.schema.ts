@@ -3,13 +3,21 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export type BookSummaryDocument = HydratedDocument<BookSummary>;
 
+class Note {
+  @Prop({ required: true })
+  content: string;
+
+  @Prop({ default: Date.now })
+  createdAt: Date;
+}
+
 @Schema()
 export class BookSummary {
-  @Prop()
-  summary: string[];
+  @Prop({ type: [Note], default: [] })
+  summary: Note[];
 
-  @Prop()
-  quotes: string[];
+  @Prop({ type: [Note], default: [] })
+  quotes: Note[];
 
   @Prop()
   review: string;

@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BookSummary } from './schemas/book-summary.schema';
+import { BookEntry, BookSummary } from './schemas/book-summary.schema';
 import { AddBookEntryDto } from './dto/add-book-entry.dto';
 import { BookEntryActionType } from 'src/types';
 
 @Injectable()
 export class BookSummaryService {
-  constructor(@InjectModel('BookSummary') private readonly bookSummaryModel: Model<BookSummary>) {}
+  constructor(
+    @InjectModel('BookSummary')
+    private readonly bookSummaryModel: Model<BookSummary>,
+  ) {}
 
   async getBookSummary(userId: string, bookId: string) {
     return await this.bookSummaryModel.findOne({ user: userId, book: bookId });
@@ -22,7 +25,12 @@ export class BookSummaryService {
       bookSummary = await this.bookSummaryModel.create({ user: userId, book: bookId });
     }
 
-    bookSummary[actionType].push(content);
+    const newEntry = {
+      content,
+      createdAt: new Date(),
+    };
+
+    bookSummary[actionType].push(newEntry);
 
     return await bookSummary.save();
   }
@@ -34,7 +42,10 @@ export class BookSummaryService {
     actionType: BookEntryActionType,
     newValue: string,
   ) {
-    const bookSummary = await this.bookSummaryModel.findOne({ user: userId, book: bookId });
+    const bookSummary = await this.bookSummaryModel.findOne({
+      user: userId,
+      book: bookId,
+    });
 
     if (!bookSummary) {
       throw new Error('Book summary not found for the given user and book.');
@@ -44,7 +55,10 @@ export class BookSummaryService {
       throw new Error('Invalid entry index.');
     }
 
-    bookSummary[actionType][summaryIndex] = newValue;
+    bookSummary[actionType][summaryIndex] = {
+      content: newValue,
+      createdAt: bookSummary[actionType][summaryIndex].createdAt,
+    };
 
     return await bookSummary.save();
   }
