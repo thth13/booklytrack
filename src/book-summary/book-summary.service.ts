@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { BookEntry, BookSummary } from './schemas/book-summary.schema';
+import { Note, BookSummary } from './schemas/book-summary.schema';
 import { AddBookEntryDto } from './dto/add-book-entry.dto';
 import { BookEntryActionType } from 'src/types';
 
@@ -14,6 +14,20 @@ export class BookSummaryService {
 
   async getBookSummary(userId: string, bookId: string) {
     return await this.bookSummaryModel.findOne({ user: userId, book: bookId });
+  }
+
+  async getBookRecentSummaries(userId: string, limit: number = 5): Promise<Note[]> {
+    const summaries = await this.bookSummaryModel.find({ user: userId });
+
+    let allEntries: Note[] = [];
+
+    summaries.forEach((summaryDoc) => {
+      allEntries = allEntries.concat(summaryDoc.summary || [], summaryDoc.quotes || []);
+    });
+
+    allEntries.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    return allEntries.slice(0, limit);
   }
 
   async addBookEntry(addBookEntryDto: AddBookEntryDto) {

@@ -45,6 +45,12 @@ export class BookSummaryController {
     );
   }
 
+  @Get('recent/:userId')
+  @HttpCode(HttpStatus.OK)
+  async getBookRecentSummaries(@Param('userId') userId: string) {
+    return await this.bookSummaryService.getBookRecentSummaries(userId);
+  }
+
   @Get(':userId/:bookId')
   @HttpCode(HttpStatus.OK)
   // @UseGuards(CheckAccessGuard)

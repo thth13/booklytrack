@@ -3,7 +3,7 @@ import mongoose, { HydratedDocument, Types } from 'mongoose';
 
 export type BookSummaryDocument = HydratedDocument<BookSummary>;
 
-class Note {
+export class Note {
   @Prop({ required: true })
   content: string;
 
