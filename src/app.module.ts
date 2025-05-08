@@ -7,6 +7,8 @@ import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
 import { BookSummaryModule } from './book-summary/book-summary.module';
 import { ProfileModule } from './profile/profile.module';
+import { OpenAiModule } from './openai/openai.module';
+import { QuizModule } from './quiz/quiz.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { ProfileModule } from './profile/profile.module';
     BookModule,
     BookSummaryModule,
     ProfileModule,
+    OpenAiModule,
+    QuizModule,
   ],
 })
 export class AppModule {}
