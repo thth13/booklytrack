@@ -1,22 +1,21 @@
 import { Injectable } from '@nestjs/common';
 import { OpenAI } from 'openai';
-// Import the specific type for message parameters
-import { ChatCompletionMessageParam } from 'openai/resources/chat/completions';
 
 @Injectable()
 export class OpenAiService {
   private readonly openai = new OpenAI({
     baseURL: 'https://api.deepseek.com',
-    apiKey: 'sk-dc9743d618234776bb66ac0cddd8b063',
+    apiKey: process.env.OPENAI_API_KEY,
   });
 
   async generateQuestions(notes: string[]): Promise<string[]> {
     const prompt = `
-      На основе следующих заметок пользователя о прочитанной книге сгенерируй 5 тестовых вопросов для проверки понимания материала.
-      Вопросы должны быть разного типа: на знание фактов, на понимание концепций, на анализ.
-      Отвечай только списком вопросов, без дополнительных пояснений.
+      Based on the following user notes about a book they read, generate 5 test questions to check their understanding of the material.
+      The questions should be of different types: factual recall, conceptual understanding, and analysis.
+      Respond only with a list of questions, without any additional explanations.
+      Respond in the same language as the user's notes.
       
-      Заметки пользователя:
+      User notes:
       ${notes.join('\n')}
     `;
 
@@ -36,14 +35,15 @@ export class OpenAiService {
     notes: string[],
   ): Promise<{ score: number; feedback: string }> {
     const prompt = `
-      Оцени ответ пользователя на вопрос по книге. Учитывай заметки пользователя о книге.
-      Верни JSON объект с полями score (от 0 до 10) и feedback (краткий фидбек).
+      Evaluate the user's answer to the question about the book. Consider the user's notes on the book.
+      Return a JSON object with the fields "score" (from 0 to 10) and "feedback" (brief feedback).
+      Respond in the same language as the user's answer and notes.
       
-      Вопрос: ${question}
-      Ответ пользователя: ${userAnswer}
-      Заметки пользователя о книге: ${notes.join('\n')}
+      Question: ${question}
+      User's answer: ${userAnswer}
+      User's notes on the book: ${notes.join('\n')}
       
-      Ответ должен быть только в формате JSON, без дополнительного текста.
+      The response must be in JSON format only, with no additional text.
     `;
 
     const completion = await this.openai.chat.completions.create({
