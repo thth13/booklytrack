@@ -4,23 +4,24 @@ import { Profile } from './schemas/profile.schema';
 import { Model, Types } from 'mongoose';
 import { EditProfileDto } from './dto/edit-profile-dto';
 import sharp from 'sharp';
-import { join } from 'path';
+import { InjectS3, S3 } from 'nestjs-s3';
 import { randomUUID } from 'crypto';
-import * as fs from 'fs';
 import { Book } from 'src/book/interfaces/book.interface';
 import { AddBookDto } from './dto/add-book.dto';
 import { ReadCategory } from 'src/types';
+import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class ProfileService {
   constructor(
     @InjectModel('Profile') private readonly profileModel: Model<Profile>,
     @InjectModel('Book') private readonly bookModel: Model<Book>,
+    @InjectS3() private readonly s3: S3,
   ) {}
 
   async editProfile(id: string, editProfileDto: EditProfileDto, avatar?: Express.Multer.File) {
     if (avatar) {
-      editProfileDto.avatar = await this.compressAndSaveAvatar(avatar);
+      editProfileDto.avatar = await this.compressAndUploadAvatar(avatar, id);
     }
 
     return await this.profileModel.findOneAndUpdate({ user: id }, editProfileDto);
@@ -62,18 +63,36 @@ export class ProfileService {
     }
   }
 
-  private async compressAndSaveAvatar(avatar: Express.Multer.File) {
-    const uniqueFileName = `${randomUUID()}.webp`;
-    const outputDir = join(process.cwd(), 'avatars');
-    const outputPath = join(outputDir, uniqueFileName);
+  private async compressAndUploadAvatar(avatar: Express.Multer.File, userId: string) {
+    const uniqueFileName = `${randomUUID()}`;
+    const buffer = await sharp(avatar.buffer).webp({ quality: 30 }).toBuffer();
 
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    console.log(uniqueFileName);
+    const params = {
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: uniqueFileName,
+      Body: buffer,
+      ContentType: avatar.mimetype,
+    };
+
+    try {
+      await this.s3.send(new PutObjectCommand(params));
+
+      const profile = await this.profileModel.findOne({ user: userId }).select('avatar');
+
+      if (profile.avatar) {
+        await this.s3.send(
+          new DeleteObjectCommand({
+            Bucket: process.env.S3_BUCKET_NAME,
+            Key: profile.avatar,
+          }),
+        );
+      }
+    } catch (err) {
+      console.log(err);
     }
 
-    await sharp(avatar.buffer).webp({ quality: 30 }).toFile(outputPath);
-
-    return uniqueFileName;
+    return params.Key;
   }
 
   // private async checkBookExists(book: Book, bookId: string) {
