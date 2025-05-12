@@ -6,7 +6,6 @@ import { EditProfileDto } from './dto/edit-profile-dto';
 import sharp from 'sharp';
 import { InjectS3, S3 } from 'nestjs-s3';
 import { randomUUID } from 'crypto';
-import { Book } from 'src/book/interfaces/book.interface';
 import { AddBookDto } from './dto/add-book.dto';
 import { ReadCategory } from 'src/types';
 import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
@@ -15,7 +14,6 @@ import { DeleteObjectCommand, PutObjectCommand } from '@aws-sdk/client-s3';
 export class ProfileService {
   constructor(
     @InjectModel('Profile') private readonly profileModel: Model<Profile>,
-    @InjectModel('Book') private readonly bookModel: Model<Book>,
     @InjectS3() private readonly s3: S3,
   ) {}
 
@@ -67,7 +65,6 @@ export class ProfileService {
     const uniqueFileName = `${randomUUID()}`;
     const buffer = await sharp(avatar.buffer).webp({ quality: 30 }).toBuffer();
 
-    console.log(uniqueFileName);
     const params = {
       Bucket: process.env.S3_BUCKET_NAME,
       Key: uniqueFileName,

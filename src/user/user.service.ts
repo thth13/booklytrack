@@ -33,7 +33,7 @@ export class UserService {
   async create(req: Request, CreateUserDto: CreateUserDto): Promise<UserLoginInfo> {
     const user = new this.userModel(CreateUserDto);
     await this.isEmailUnique(user.email);
-    const profile = new this.profileModel({ user: user.id, name: CreateUserDto.name });
+    const profile = new this.profileModel({ user: user.id });
 
     await profile.save();
     await user.save();

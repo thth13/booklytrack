@@ -3,18 +3,6 @@ import { IsEmail, IsNotEmpty, IsString, MaxLength, MinLength } from 'class-valid
 
 export class CreateUserDto {
   @ApiProperty({
-    example: 'mike smith',
-    description: 'The name of the User',
-    format: 'string',
-    minLength: 4,
-    maxLength: 255,
-  })
-  @IsString()
-  @MinLength(4)
-  @MaxLength(255)
-  readonly name: string;
-
-  @ApiProperty({
     example: 'mymail@gmail.com',
     description: 'The email of the User',
     format: 'email',
