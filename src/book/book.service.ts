@@ -26,6 +26,8 @@ export class BookService {
         categories: res.data.volumeInfo.categories,
         publisher: res.data.volumeInfo.publisher,
         publishedDate: res.data.volumeInfo.publishedDate,
+        pageCount: res.data.volumeInfo.pageCount,
+        language: res.data.volumeInfo.language,
       });
     }
 

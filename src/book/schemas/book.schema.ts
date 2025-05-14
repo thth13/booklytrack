@@ -29,6 +29,12 @@ export class Book {
 
   @Prop()
   publishedDate: Date;
+
+  @Prop()
+  pageCount: number;
+
+  @Prop()
+  language: string;
 }
 
 export const BookSchema = SchemaFactory.createForClass(Book);

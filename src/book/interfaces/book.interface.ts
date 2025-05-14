@@ -18,4 +18,6 @@ export interface Book extends Document {
   categories: string[];
   publisher: string;
   publishedDate: Date;
+  pageCount: number;
+  language: string;
 }
