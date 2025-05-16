@@ -52,8 +52,8 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  app.use(json({ limit: '5mb' }));
-  app.use(urlencoded({ limit: '5mb', extended: true }));
+  app.use(json({ limit: '20mb' }));
+  app.use(urlencoded({ limit: '20mb', extended: true }));
 
   const PORT = process.env.PORT || 8000;
   await app.listen(PORT);

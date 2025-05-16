@@ -29,6 +29,14 @@ export class UserController {
     return await this.userService.login(req, loginUserDto);
   }
 
+  @Post('google')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'Login with google' })
+  @ApiOkResponse({})
+  async googleLogin(@Req() req: Request, @Body('token') token: string) {
+    return await this.userService.googleLogin(req, token);
+  }
+
   @Post('refresh-access-token')
   @HttpCode(HttpStatus.CREATED)
   @ApiOperation({ description: 'Refresh Access Token with refesh token' })

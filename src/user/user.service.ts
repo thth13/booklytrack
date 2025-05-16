@@ -49,6 +49,32 @@ export class UserService {
     return await this.buildLoginInfo(req, user);
   }
 
+  async googleLogin(req: Request, token: string): Promise<UserLoginInfo> {
+    const googlePayload = await this.authService.googleAuth(token);
+
+    let user = await this.userModel.findOne({
+      email: googlePayload.email,
+    });
+
+    if (!user) {
+      user = await this.userModel.create({
+        email: googlePayload.email,
+        password: v4(),
+      });
+
+      const profile = new this.profileModel({
+        user: user.id,
+        name: googlePayload.given_name,
+        avatar: googlePayload.picture,
+      });
+
+      await profile.save();
+      await user.save();
+    }
+
+    return await this.buildLoginInfo(req, user);
+  }
+
   async refreshAccessToken(refreshAccessTokenDto: RefreshAccessTokenDto) {
     const userId = await this.authService.findRefreshToken(refreshAccessTokenDto.refreshToken);
     const user = await this.userModel.findById(userId);

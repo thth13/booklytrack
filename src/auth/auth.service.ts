@@ -9,10 +9,12 @@ import { getClientIp } from 'request-ip';
 import { User } from 'src/user/interfaces/user.interface';
 import { RefreshToken } from './interfaces/refresh-token.interface';
 import { v4 } from 'uuid';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
-  cryptr: any;
+  cryptr: Cryptr;
+  googleClient: OAuth2Client;
 
   constructor(
     @InjectModel('User') private readonly userModel: Model<User>,
@@ -21,6 +23,16 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {
     this.cryptr = new Cryptr(process.env.ENCRYPT_JWT_SECRET);
+    this.googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  }
+
+  async googleAuth(token: string) {
+    const ticket = await this.googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+
+    return ticket.getPayload();
   }
 
   async createAccessToken(userId) {
