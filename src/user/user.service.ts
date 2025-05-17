@@ -15,6 +15,10 @@ import { VerifyUuidDto } from './dto/verify-uuid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { Profile } from 'src/profile/interfaces/profile.interface';
 import { User, UserLoginInfo } from './interfaces/user.interface';
+import { randomUUID } from 'crypto';
+import { InjectS3, S3 } from 'nestjs-s3';
+import axios from 'axios';
+import { PutObjectCommand } from '@aws-sdk/client-s3';
 
 @Injectable()
 export class UserService {
@@ -28,6 +32,7 @@ export class UserService {
     @InjectModel('ForgotPassword')
     private readonly forgotPasswordModel: Model<ForgotPassword>,
     private readonly authService: AuthService,
+    @InjectS3() private readonly s3: S3,
   ) {}
 
   async create(req: Request, CreateUserDto: CreateUserDto): Promise<UserLoginInfo> {
@@ -62,11 +67,14 @@ export class UserService {
         password: v4(),
       });
 
-      const profile = new this.profileModel({
+      let profile = new this.profileModel({
         user: user.id,
         name: googlePayload.given_name,
-        avatar: googlePayload.picture,
       });
+
+      if (googlePayload.picture) {
+        profile.avatar = await this.downloadAndSaveGoogleAvatar(googlePayload.picture);
+      }
 
       await profile.save();
       await user.save();
@@ -175,6 +183,29 @@ export class UserService {
     }
 
     return match;
+  }
+
+  private async downloadAndSaveGoogleAvatar(url: string) {
+    const uniqueFileName = `${randomUUID()}`;
+    try {
+      const response = await axios.get(url, {
+        decompress: false,
+        responseType: 'arraybuffer',
+      });
+
+      const params = {
+        Bucket: process.env.S3_BUCKET_NAME,
+        Key: uniqueFileName,
+        Body: response.data,
+        ContentType: response.headers['content-type'],
+      };
+
+      await this.s3.send(new PutObjectCommand(params));
+
+      return uniqueFileName;
+    } catch (err) {
+      console.error('Error loading file:', err);
+    }
   }
 
   // private async passwordsDoNotMatch(user: User) {
