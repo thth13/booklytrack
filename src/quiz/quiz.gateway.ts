@@ -55,7 +55,6 @@ export class QuizGateway implements OnGatewayConnection, OnGatewayDisconnect {
     try {
       const questions = await this.openaiService.generateQuestions(data.notes);
 
-      // Создаем запись результата в MongoDB
       const result = await this.quizResultModel.create({
         userId: data.userId,
         notes: data.notes.join('|'),

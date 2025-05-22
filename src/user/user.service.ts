@@ -19,6 +19,7 @@ import { randomUUID } from 'crypto';
 import { InjectS3, S3 } from 'nestjs-s3';
 import axios from 'axios';
 import { PutObjectCommand } from '@aws-sdk/client-s3';
+import { GoogleCodeResponse } from 'src/types';
 
 @Injectable()
 export class UserService {
@@ -54,8 +55,8 @@ export class UserService {
     return await this.buildLoginInfo(req, user);
   }
 
-  async googleLogin(req: Request, token: string): Promise<UserLoginInfo> {
-    const googlePayload = await this.authService.googleAuth(token);
+  async googleLogin(req: Request, codeResponse: GoogleCodeResponse): Promise<UserLoginInfo> {
+    const googlePayload = await this.authService.googleAuth(codeResponse);
 
     let user = await this.userModel.findOne({
       email: googlePayload.email,

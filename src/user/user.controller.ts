@@ -8,6 +8,7 @@ import { RefreshAccessTokenDto } from './dto/refresh-access-token';
 import { CreateForgotPasswordDto } from './dto/create-forgot-password.dto';
 import { VerifyUuidDto } from './dto/verify-uuid.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { GoogleCodeResponse } from 'src/types';
 
 @Controller('user')
 export class UserController {
@@ -33,8 +34,8 @@ export class UserController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'Login with google' })
   @ApiOkResponse({})
-  async googleLogin(@Req() req: Request, @Body('token') token: string) {
-    return await this.userService.googleLogin(req, token);
+  async googleLogin(@Req() req: Request, @Body('codeResponse') codeResponse: GoogleCodeResponse) {
+    return await this.userService.googleLogin(req, codeResponse);
   }
 
   @Post('refresh-access-token')

@@ -10,6 +10,7 @@ import { User } from 'src/user/interfaces/user.interface';
 import { RefreshToken } from './interfaces/refresh-token.interface';
 import { v4 } from 'uuid';
 import { OAuth2Client } from 'google-auth-library';
+import { GoogleCodeResponse } from 'src/types';
 
 @Injectable()
 export class AuthService {
@@ -23,16 +24,26 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {
     this.cryptr = new Cryptr(process.env.ENCRYPT_JWT_SECRET);
-    this.googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+    this.googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET);
   }
 
-  async googleAuth(token: string) {
-    const ticket = await this.googleClient.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+  async googleAuth(codeResponse: GoogleCodeResponse) {
+    try {
+      const { tokens } = await this.googleClient.getToken({
+        code: codeResponse.code,
+        redirect_uri: codeResponse.redirectUri,
+      });
 
-    return ticket.getPayload();
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: tokens.id_token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      return ticket.getPayload();
+    } catch (err) {
+      console.log(err.response.data);
+      throw err;
+    }
   }
 
   async createAccessToken(userId) {
