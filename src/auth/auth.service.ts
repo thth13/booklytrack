@@ -31,7 +31,7 @@ export class AuthService {
     try {
       const { tokens } = await this.googleClient.getToken({
         code: codeResponse.code,
-        redirect_uri: codeResponse.redirectUri,
+        redirect_uri: 'postmessage',
       });
 
       const ticket = await this.googleClient.verifyIdToken({

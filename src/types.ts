@@ -14,5 +14,4 @@ export interface GoogleCodeResponse {
   scope?: string;
   authuser?: string;
   prompt?: string;
-  redirectUri: string;
 }
