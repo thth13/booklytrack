@@ -6,10 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
-import { BookSummaryModule } from './book-summary/book-summary.module';
 import { ProfileModule } from './profile/profile.module';
 import { OpenAiModule } from './openai/openai.module';
 import { QuizModule } from './quiz/quiz.module';
+import { BookNotesModule } from './book-notes/book-notes.module';
 
 @Module({
   imports: [
@@ -31,10 +31,10 @@ import { QuizModule } from './quiz/quiz.module';
     AuthModule,
     UserModule,
     BookModule,
-    BookSummaryModule,
     ProfileModule,
     OpenAiModule,
     QuizModule,
+    BookNotesModule,
   ],
 })
 export class AppModule {}

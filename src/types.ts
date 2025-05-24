@@ -4,11 +4,6 @@ export enum ReadCategory {
   WANTS_READ = 'wantsToRead',
 }
 
-export enum BookEntryActionType {
-  SUMMARY = 'summary',
-  QUOTES = 'quotes',
-}
-
 export interface GoogleCodeResponse {
   code: string;
   scope?: string;

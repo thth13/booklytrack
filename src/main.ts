@@ -2,11 +2,11 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe, BadRequestException, ValidationError } from '@nestjs/common';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { BookSummaryModule } from './book-summary/book-summary.module';
 import { ProfileModule } from './profile/profile.module';
 import { UserModule } from './user/user.module';
 import { BookModule } from './book/book.module';
 import { json, urlencoded } from 'express';
+import { BookNotesModule } from './book-notes/book-notes.module';
 
 interface ValidationErrors {
   [key: string]: string;
@@ -41,7 +41,7 @@ async function bootstrap() {
     .addTag('API')
     .build();
   const document = SwaggerModule.createDocument(app, options, {
-    include: [BookSummaryModule, BookModule, ProfileModule, UserModule],
+    include: [BookModule, ProfileModule, UserModule, BookNotesModule],
   });
   SwaggerModule.setup('api', app, document);
 

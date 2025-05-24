@@ -1,15 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString } from 'class-validator';
-import { BookEntryActionType } from 'src/types';
 
-export class AddBookEntryDto {
-  @ApiProperty({
-    description: 'Action Type',
-    format: 'string',
-  })
-  @IsString()
-  readonly actionType: BookEntryActionType;
-
+export class AddBookNoteDto {
   @ApiProperty({
     description: 'Book ID',
     format: 'string',
