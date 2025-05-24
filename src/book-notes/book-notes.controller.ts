@@ -1,7 +1,9 @@
-import { Body, Controller, Delete, HttpCode, HttpStatus, Post, Put, UseGuards, Get, Param } from '@nestjs/common';
+import { Body, Controller, Delete, HttpCode, HttpStatus, Post, Put, UseGuards, Get, Param, Req } from '@nestjs/common';
 import { BookNotesService } from './book-notes.service';
 import { CheckAccessGuard } from 'src/auth/guards/checkAccess.guard';
 import { AddBookNoteDto } from './dto/add-book-note.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { UserId } from 'src/auth/decorators/user-id.decorator';
 
 @Controller('book-notes')
 export class BookNotesController {
@@ -9,7 +11,7 @@ export class BookNotesController {
 
   @Post()
   @HttpCode(HttpStatus.CREATED)
-  // @UseGuards(CheckAccessGuard)
+  @UseGuards(CheckAccessGuard)
   async addBookNote(@Body() addBookNoteDto: AddBookNoteDto) {
     return await this.bookNotesService.addBookNote(addBookNoteDto);
   }
@@ -28,15 +30,15 @@ export class BookNotesController {
 
   @Delete(':noteId')
   @HttpCode(HttpStatus.OK)
-  // @UseGuards(CheckAccessGuard)
-  async deleteBookNote(@Param('noteId') noteId: string) {
-    return await this.bookNotesService.deleteBookNote(noteId);
+  @UseGuards(JwtAuthGuard)
+  async deleteBookNote(@Param('noteId') noteId: string, @UserId() userId: string) {
+    return await this.bookNotesService.deleteBookNote(noteId, userId);
   }
 
   @Put(':noteId')
   @HttpCode(HttpStatus.OK)
-  // @UseGuards(CheckAccessGuard)
-  async editBookNote(@Param('noteId') noteId: string, @Body('content') content: string) {
-    return await this.bookNotesService.editBookNote(noteId, content);
+  @UseGuards(JwtAuthGuard)
+  async editBookNote(@Param('noteId') noteId: string, @Body('content') content: string, @UserId() userId: string) {
+    return await this.bookNotesService.editBookNote(noteId, content, userId);
   }
 }

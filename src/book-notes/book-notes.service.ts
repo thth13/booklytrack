@@ -17,10 +17,7 @@ export class BookNotesService {
   }
 
   async getBookNotes(userId: string, bookId: string) {
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error('Некорректный userId: должен быть ObjectId из 24 символов');
-    }
-    return await this.noteModel.find({ user: userId, book: bookId });
+    return await this.noteModel.find({ user: userId, book: bookId }).sort({ createdAt: -1 });
   }
 
   async addBookNote(addBookEntryDto: AddBookNoteDto) {
@@ -34,21 +31,34 @@ export class BookNotesService {
     });
   }
 
-  async editBookNote(noteId: string, content: string) {
-    const bookNote = await this.noteModel.findOne({
+  async editBookNote(noteId: string, content: string, userId: string) {
+    const note = await this.noteModel.findOne({
       _id: noteId,
     });
-
-    if (!bookNote) {
+    if (!note) {
       throw new Error('Book note not found.');
     }
 
-    bookNote.content = content;
+    this.checkUserAccess(note, userId);
+    note.content = content;
 
-    return await bookNote.save();
+    return await note.save();
   }
 
-  async deleteBookNote(noteId: string) {
+  async deleteBookNote(noteId: string, userId: string) {
+    const note = await this.noteModel.findById(noteId);
+    if (!note) {
+      throw new Error('Note not found');
+    }
+
+    this.checkUserAccess(note, userId);
+
     await this.noteModel.deleteOne({ _id: noteId });
+  }
+
+  private checkUserAccess(note: Note, userId: string) {
+    if (note.user.toString() !== userId) {
+      throw new Error('Access denied: not the owner');
+    }
   }
 }
