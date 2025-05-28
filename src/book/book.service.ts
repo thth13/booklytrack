@@ -37,4 +37,10 @@ export class BookService {
       throw new BadRequestException('Bad request.');
     }
   }
+
+  async getLatestBooks(): Promise<Book[]> {
+    const books = await this.bookModel.find().limit(10);
+
+    return books;
+  }
 }

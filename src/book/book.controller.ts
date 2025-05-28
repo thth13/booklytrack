@@ -7,6 +7,14 @@ import { Book } from './schemas/book.schema';
 export class BookController {
   constructor(private readonly bookService: BookService) {}
 
+  @Get('latest')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ description: 'Get latest books' })
+  @ApiOkResponse({})
+  async getLatestBooks(): Promise<Book[]> {
+    return await this.bookService.getLatestBooks();
+  }
+
   @Get(':id')
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ description: 'Get book' })
