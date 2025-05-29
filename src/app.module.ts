@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { S3Module } from 'nestjs-s3';
+import { TelegrafModule } from 'nestjs-telegraf';
 import { AuthModule } from './auth/auth.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
@@ -10,6 +11,7 @@ import { ProfileModule } from './profile/profile.module';
 import { OpenAiModule } from './openai/openai.module';
 import { QuizModule } from './quiz/quiz.module';
 import { BookNotesModule } from './book-notes/book-notes.module';
+import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [
@@ -28,6 +30,9 @@ import { BookNotesModule } from './book-notes/book-notes.module';
         forcePathStyle: true,
       },
     }),
+    TelegrafModule.forRoot({
+      token: process.env.TELEGRAM_BOT_TOKEN,
+    }),
     AuthModule,
     UserModule,
     BookModule,
@@ -35,6 +40,7 @@ import { BookNotesModule } from './book-notes/book-notes.module';
     OpenAiModule,
     QuizModule,
     BookNotesModule,
+    BotModule,
   ],
 })
 export class AppModule {}

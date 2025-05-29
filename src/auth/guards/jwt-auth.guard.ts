@@ -2,7 +2,7 @@ import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from
 import { Request } from 'express';
 import * as jwt from 'jsonwebtoken';
 import { JwtPayload } from 'jsonwebtoken';
-import Cryptr = require('cryptr'); // Добавьте импорт Cryptr
+import Cryptr = require('cryptr');
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
