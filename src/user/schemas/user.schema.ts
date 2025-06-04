@@ -14,6 +14,9 @@ export class User {
   @Prop({ required: true, minlength: 4, maxlength: 1024 })
   password: string;
 
+  @Prop({ unique: true, sparse: true })
+  botId: string;
+
   @Prop({ default: 0 })
   loginAttempts: number;
 

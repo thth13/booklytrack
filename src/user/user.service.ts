@@ -128,6 +128,14 @@ export class UserService {
     };
   }
 
+  async updateBotId(userId: string, botId: string) {
+    return this.userModel.findByIdAndUpdate(userId, { botId }, { new: true });
+  }
+
+  async findByBotId(botId: string) {
+    return this.userModel.findOne({ botId });
+  }
+
   // ********************************************
   // ╔═╗╦═╗╦╦  ╦╔═╗╔╦╗╔═╗  ╔╦╗╔═╗╔╦╗╦ ╦╔═╗╔╦╗╔═╗
   // ╠═╝╠╦╝║╚╗╔╝╠═╣ ║ ║╣   ║║║║╣  ║ ╠═╣║ ║ ║║╚═╗
