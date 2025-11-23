@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { S3Module } from 'nestjs-s3';
@@ -15,6 +16,10 @@ import { BotModule } from './bot/bot.module';
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     MongooseModule.forRoot(process.env.MONGO_URI),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'avatars'),
